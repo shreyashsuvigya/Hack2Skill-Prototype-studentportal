@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduTrack – Student College Data Management Portal</title>
+  <meta name="description" content="EduTrack is a comprehensive student college data management portal for tracking attendance, results, timetable, notes, and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===================== WELCOME / AUTH PAGE ===================== -->
+  <div id="auth-page" class="page active">
+    <div class="auth-bg">
+      <div class="auth-blob blob1"></div>
+      <div class="auth-blob blob2"></div>
+      <div class="auth-blob blob3"></div>
+    </div>
+    <div class="auth-container">
+      <div class="auth-brand">
+        <div class="brand-logo">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="14" fill="url(#logoGrad)"/>
+            <path d="M24 10L38 18V26L24 34L10 26V18L24 10Z" fill="white" opacity="0.9"/>
+            <path d="M24 14L34 20V28L24 34L14 28V20L24 14Z" fill="url(#logoGrad2)"/>
+            <circle cx="24" cy="24" r="4" fill="white"/>
+            <defs>
+              <linearGradient id="logoGrad" x1="0" y1="0" x2="48" y2="48">
+                <stop offset="0%" stop-color="#4f46e5"/>
+                <stop offset="100%" stop-color="#7c3aed"/>
+              </linearGradient>
+              <linearGradient id="logoGrad2" x1="0" y1="0" x2="48" y2="48">
+                <stop offset="0%" stop-color="#6366f1"/>
+                <stop offset="100%" stop-color="#8b5cf6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-name">EduTrack</h1>
+          <p class="brand-tagline">Student College Data Management</p>
+        </div>
+      </div>
+
+      <div class="auth-card">
+        <!-- Tab Switcher -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')">Login</button>
+          <button class="auth-tab" id="registerTab" onclick="switchAuthTab('register')">Register</button>
+          <div class="auth-tab-slider" id="authTabSlider"></div>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label">Student Registration Number (SRN)</label>
+            <input type="text" class="form-input" id="loginSRN" placeholder="e.g. PES2UG23CS001" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-password-wrap">
+              <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required />
+              <button type="button" class="toggle-pw" onclick="togglePW('loginPassword', this)">👁</button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Login to Portal</button>
+          <p class="auth-switch">Don't have an account? <a href="#" onclick="switchAuthTab('register')">Register here</a></p>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-input" id="regFirstName" placeholder="First name" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-input" id="regLastName" placeholder="Last name" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Student Registration Number (SRN)</label>
+            <input type="text" class="form-input" id="regSRN" placeholder="e.g. PES2UG23CS001" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" id="regEmail" placeholder="student@college.edu" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Semester</label>
+              <select class="form-input" id="regSemester" onchange="updateSectionDropdown()" required>
+                <option value="">Select Semester</option>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Section</label>
+              <select class="form-input" id="regSection" required>
+                <option value="">Select Semester First</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-password-wrap">
+              <input type="password" class="form-input" id="regPassword" placeholder="Create a strong password" required />
+              <button type="button" class="toggle-pw" onclick="togglePW('regPassword', this)">👁</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <div class="input-password-wrap">
+              <input type="password" class="form-input" id="regConfirmPassword" placeholder="Confirm your password" required />
+              <button type="button" class="toggle-pw" onclick="togglePW('regConfirmPassword', this)">👁</button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+          <p class="auth-switch">Already registered? <a href="#" onclick="switchAuthTab('login')">Login here</a></p>
+        </form>
+      </div>
+
+      <p class="auth-footer">© 2026 EduTrack · Student College Data Management Portal</p>
+    </div>
+  </div>
+
+  <!-- ===================== DASHBOARD ===================== -->
+  <div id="dashboard-page" class="page">
+
+    <!-- TOP NAVBAR -->
+    <nav class="topnav" id="topnav">
+      <div class="topnav-left">
+        <button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="brand-logo-sm">
+          <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="14" fill="url(#logoGrad3)"/>
+            <path d="M24 10L38 18V26L24 34L10 26V18L24 10Z" fill="white" opacity="0.9"/>
+            <circle cx="24" cy="24" r="4" fill="white"/>
+            <defs>
+              <linearGradient id="logoGrad3" x1="0" y1="0" x2="48" y2="48">
+                <stop offset="0%" stop-color="#4f46e5"/>
+                <stop offset="100%" stop-color="#7c3aed"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="topnav-brand">EduTrack</span>
+      </div>
+      <div class="topnav-right">
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode">
+          <span class="theme-icon-light">☀️</span>
+          <span class="theme-icon-dark">🌙</span>
+        </button>
+        <div class="topnav-user" onclick="toggleUserMenu()" id="userMenuBtn">
+          <div class="user-avatar" id="navAvatar">?</div>
+          <span id="navUserName">Student</span>
+          <span class="dropdown-arrow">▼</span>
+        </div>
+        <div class="user-dropdown" id="userDropdown">
+          <div class="user-dropdown-info">
+            <div class="user-avatar-lg" id="dropAvatar">?</div>
+            <div>
+              <div id="dropUserName" class="font-semibold">Student Name</div>
+              <div id="dropUserSRN" class="text-muted text-sm">SRN</div>
+            </div>
+          </div>
+          <hr class="dropdown-divider"/>
+          <button class="dropdown-item" onclick="navigateTo('profile')">👤 Profile</button>
+          <button class="dropdown-item danger" onclick="handleLogout()">🚪 Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebarAvatar">?</div>
+        <div class="sidebar-user-info">
+          <div id="sidebarName" class="sidebar-name">Student</div>
+          <div id="sidebarSRN" class="sidebar-srn">SRN</div>
+          <div id="sidebarSection" class="sidebar-section-badge">Section</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" onclick="navigateTo('profile')" id="nav-profile" data-section="profile">
+          <span class="nav-icon">👤</span><span class="nav-label">Student Profile</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('class-section')" id="nav-class-section" data-section="class-section">
+          <span class="nav-icon">🏫</span><span class="nav-label">Class &amp; Section</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('timetable')" id="nav-timetable" data-section="timetable">
+          <span class="nav-icon">📅</span><span class="nav-label">Timetable</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('attendance')" id="nav-attendance" data-section="attendance">
+          <span class="nav-icon">✅</span><span class="nav-label">Attendance</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('notes')" id="nav-notes" data-section="notes">
+          <span class="nav-icon">📝</span><span class="nav-label">Notes &amp; Docs</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('results')" id="nav-results" data-section="results">
+          <span class="nav-icon">📊</span><span class="nav-label">Results</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('events')" id="nav-events" data-section="events">
+          <span class="nav-icon">🎉</span><span class="nav-label">Events</span>
+        </button>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="sidebar-logout" onclick="handleLogout()">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="mainContent">
+
+      <!-- ===== PROFILE SECTION ===== -->
+      <section class="section active" id="section-profile">
+        <div class="section-header">
+          <h2 class="section-title">👤 Student Profile</h2>
+          <button class="btn btn-primary btn-sm" onclick="toggleEditProfile()" id="editProfileBtn">✏️ Edit Profile</button>
+        </div>
+
+        <!-- PROFILE VIEW -->
+        <div id="profileView">
+          <div class="profile-card">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar" id="profileAvatar">?</div>
+              <button class="avatar-edit-btn" onclick="document.getElementById('avatarUpload').click()">📷</button>
+              <input type="file" id="avatarUpload" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)" />
+            </div>
+            <div class="profile-info">
+              <h3 id="profileName" class="profile-name">Student Name</h3>
+              <p id="profileSRN" class="profile-srn">SRN: —</p>
+              <div class="profile-badges">
+                <span class="badge badge-primary" id="profileSemester">Semester —</span>
+                <span class="badge badge-secondary" id="profileSectionBadge">Section —</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-label">Full Name</div>
+              <div class="info-value" id="pName">—</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">SRN</div>
+              <div class="info-value" id="pSRN">—</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Email</div>
+              <div class="info-value" id="pEmail">—</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Phone</div>
+              <div class="info-value" id="pPhone">—</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Semester</div>
+              <div class="info-value" id="pSemester">—</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Section</div>
+              <div class="info-value" id="pSection">—</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Department</div>
+              <div class="info-value" id="pDept">Computer Science &amp; Engineering</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Date of Birth</div>
+              <div class="info-value" id="pDOB">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROFILE EDIT -->
+        <div id="profileEdit" style="display:none">
+          <div class="card">
+            <h3 class="card-title">Edit Profile Information</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-input" id="editFirstName" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-input" id="editLastName" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" class="form-input" id="editPhone" placeholder="+91 XXXXX XXXXX" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                <input type="date" class="form-input" id="editDOB" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Blood Group</label>
+                <select class="form-input" id="editBloodGroup">
+                  <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                  <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Address</label>
+                <input type="text" class="form-input" id="editAddress" placeholder="City, State" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" onclick="saveProfile()">💾 Save Changes</button>
+              <button class="btn btn-outline" onclick="toggleEditProfile()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CLASS & SECTION ===== -->
+      <section class="section" id="section-class-section">
+        <div class="section-header">
+          <h2 class="section-title">🏫 Class &amp; Section</h2>
+        </div>
+        <div class="class-section-grid">
+          <div class="card class-info-card">
+            <div class="class-stat-icon">📚</div>
+            <div class="class-stat-label">Department</div>
+            <div class="class-stat-value">Computer Science &amp; Engineering</div>
+          </div>
+          <div class="card class-info-card">
+            <div class="class-stat-icon">🎓</div>
+            <div class="class-stat-label">Current Semester</div>
+            <div class="class-stat-value" id="csSemester">—</div>
+          </div>
+          <div class="card class-info-card">
+            <div class="class-stat-icon">🏷️</div>
+            <div class="class-stat-label">Section</div>
+            <div class="class-stat-value" id="csSection">—</div>
+          </div>
+          <div class="card class-info-card">
+            <div class="class-stat-icon">👥</div>
+            <div class="class-stat-label">Class Strength</div>
+            <div class="class-stat-value">60 Students</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1.5rem;">
+          <h3 class="card-title">📖 Enrolled Subjects</h3>
+          <div class="subjects-grid" id="subjectsGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1.5rem;">
+          <h3 class="card-title">👨‍🏫 Faculty Details</h3>
+          <div class="faculty-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Faculty Name</th>
+                  <th>Email</th>
+                  <th>Cabin</th>
+                </tr>
+              </thead>
+              <tbody id="facultyTableBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== TIMETABLE ===== -->
+      <section class="section" id="section-timetable">
+        <div class="section-header">
+          <h2 class="section-title">📅 Weekly Timetable</h2>
+          <div class="section-header-actions">
+            <span id="ttSemesterBadge" class="badge badge-primary">Semester —</span>
+            <span id="ttSectionBadge" class="badge badge-secondary">Section —</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="timetable-wrap">
+            <table class="timetable" id="timetableTable">
+              <thead id="timetableHead"></thead>
+              <tbody id="timetableBody"></tbody>
+            </table>
+          </div>
+          <div class="timetable-legend">
+            <div class="legend-item"><span class="legend-dot dot-theory"></span> Theory</div>
+            <div class="legend-item"><span class="legend-dot dot-lab"></span> Lab</div>
+            <div class="legend-item"><span class="legend-dot dot-break"></span> Break / Free</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== ATTENDANCE ===== -->
+      <section class="section" id="section-attendance">
+        <div class="section-header">
+          <h2 class="section-title">✅ Attendance Tracker</h2>
+          <div class="section-header-actions">
+            <input type="date" class="form-input input-sm" id="attendanceDatePicker" onchange="renderAttendanceForDate()" />
+          </div>
+        </div>
+
+        <!-- Overall Stats -->
+        <div class="attendance-overview" id="attendanceOverviewCards">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Daily Mark Attendance -->
+        <div class="card" style="margin-top:1.5rem;">
+          <h3 class="card-title">📋 Mark Today's Attendance</h3>
+          <p class="card-desc" id="attendanceDateLabel">Select a date to mark attendance</p>
+          <div class="attendance-subjects" id="attendanceSubjectCards">
+            <!-- Populated by JS -->
+          </div>
+          <div class="form-actions" style="margin-top:1rem;">
+            <button class="btn btn-primary" onclick="saveAttendance()">✅ Save Attendance</button>
+          </div>
+        </div>
+
+        <!-- Subject-wise Charts -->
+        <div class="card" style="margin-top:1.5rem;">
+          <h3 class="card-title">📊 Subject-wise Attendance</h3>
+          <div class="attendance-charts-grid" id="attendanceChartsGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Attendance History Table -->
+        <div class="card" style="margin-top:1.5rem;">
+          <h3 class="card-title">📆 Attendance History</h3>
+          <div class="table-wrap">
+            <table class="data-table" id="attendanceHistoryTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>PSM</th>
+                  <th>DS</th>
+                  <th>OOP</th>
+                  <th>COA</th>
+                  <th>DBMS</th>
+                  <th>CN</th>
+                  <th>AI</th>
+                  <th>CLE</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceHistoryBody">
+                <tr><td colspan="10" class="text-center text-muted">No attendance records yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== NOTES & DOCS ===== -->
+      <section class="section" id="section-notes">
+        <div class="section-header">
+          <h2 class="section-title">📝 Notes &amp; Documents</h2>
+          <button class="btn btn-primary btn-sm" onclick="openNoteModal()">+ New Note</button>
+        </div>
+
+        <div class="notes-filter-bar">
+          <input type="text" class="form-input input-sm" id="notesSearch" placeholder="🔍 Search notes..." oninput="filterNotes()" />
+          <select class="form-input input-sm" id="notesSubjectFilter" onchange="filterNotes()">
+            <option value="">All Subjects</option>
+            <option value="PSM">PSM</option>
+            <option value="DS">DS</option>
+            <option value="OOP">OOP</option>
+            <option value="COA">COA</option>
+            <option value="DBMS">DBMS</option>
+            <option value="CN">CN</option>
+            <option value="AI">AI</option>
+            <option value="CLE">CLE</option>
+            <option value="General">General</option>
+          </select>
+          <select class="form-input input-sm" id="notesTypeFilter" onchange="filterNotes()">
+            <option value="">All Types</option>
+            <option value="note">📝 Note</option>
+            <option value="doc">📄 Document</option>
+            <option value="link">🔗 Link</option>
+          </select>
+        </div>
+
+        <div class="notes-grid" id="notesGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Note Modal -->
+        <div class="modal-backdrop" id="noteModal">
+          <div class="modal">
+            <div class="modal-header">
+              <h3 id="noteModalTitle">Add New Note</h3>
+              <button class="modal-close" onclick="closeNoteModal()">✕</button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-input" id="noteTitle" placeholder="Note title..." />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Subject</label>
+                  <select class="form-input" id="noteSubject">
+                    <option value="General">General</option>
+                    <option value="PSM">PSM</option>
+                    <option value="DS">DS</option>
+                    <option value="OOP">OOP</option>
+                    <option value="COA">COA</option>
+                    <option value="DBMS">DBMS</option>
+                    <option value="CN">CN</option>
+                    <option value="AI">AI</option>
+                    <option value="CLE">CLE</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Type</label>
+                  <select class="form-input" id="noteType">
+                    <option value="note">📝 Note</option>
+                    <option value="doc">📄 Document</option>
+                    <option value="link">🔗 Link</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Content / URL</label>
+                <textarea class="form-input form-textarea" id="noteContent" placeholder="Write your note here..."></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Color Tag</label>
+                <div class="color-picker" id="colorPicker">
+                  <button type="button" class="color-dot active" style="background:#6366f1" data-color="#6366f1" onclick="selectColor(this)"></button>
+                  <button type="button" class="color-dot" style="background:#10b981" data-color="#10b981" onclick="selectColor(this)"></button>
+                  <button type="button" class="color-dot" style="background:#f59e0b" data-color="#f59e0b" onclick="selectColor(this)"></button>
+                  <button type="button" class="color-dot" style="background:#ef4444" data-color="#ef4444" onclick="selectColor(this)"></button>
+                  <button type="button" class="color-dot" style="background:#06b6d4" data-color="#06b6d4" onclick="selectColor(this)"></button>
+                  <button type="button" class="color-dot" style="background:#8b5cf6" data-color="#8b5cf6" onclick="selectColor(this)"></button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline" onclick="closeNoteModal()">Cancel</button>
+              <button class="btn btn-primary" onclick="saveNote()">💾 Save Note</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== RESULTS ===== -->
+      <section class="section" id="section-results">
+        <div class="section-header">
+          <h2 class="section-title">📊 Results &amp; Performance</h2>
+          <button class="btn btn-primary btn-sm" onclick="openResultModal()">+ Add Result</button>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="results-overview" id="resultsOverviewCards"></div>
+
+        <!-- Charts Row -->
+        <div class="results-charts-row">
+          <div class="card results-chart-card">
+            <h3 class="card-title">Subject-wise Marks (Bar Chart)</h3>
+            <div class="chart-container">
+              <canvas id="marksBarChart"></canvas>
+            </div>
+          </div>
+          <div class="card results-chart-card">
+            <h3 class="card-title">Performance Distribution (Radar)</h3>
+            <div class="chart-container">
+              <canvas id="marksRadarChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:1.5rem;">
+          <h3 class="card-title">📈 Semester Performance Trend</h3>
+          <div class="chart-container chart-tall">
+            <canvas id="semesterLineChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="card" style="margin-top:1.5rem;">
+          <h3 class="card-title">📋 Exam Results</h3>
+          <div class="table-wrap">
+            <table class="data-table" id="resultsTable">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Exam Type</th>
+                  <th>Max Marks</th>
+                  <th>Marks Obtained</th>
+                  <th>Percentage</th>
+                  <th>Grade</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="resultsTableBody">
+                <tr><td colspan="8" class="text-center text-muted">No results added yet. Click "+ Add Result" to begin.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Result Modal -->
+        <div class="modal-backdrop" id="resultModal">
+          <div class="modal">
+            <div class="modal-header">
+              <h3>Add Exam Result</h3>
+              <button class="modal-close" onclick="closeResultModal()">✕</button>
+            </div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Subject</label>
+                  <select class="form-input" id="resultSubject">
+                    <option value="PSM">PSM</option>
+                    <option value="DS">DS</option>
+                    <option value="OOP">OOP</option>
+                    <option value="COA">COA</option>
+                    <option value="DBMS">DBMS</option>
+                    <option value="CN">CN</option>
+                    <option value="AI">AI</option>
+                    <option value="CLE">CLE</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Exam Type</label>
+                  <select class="form-input" id="resultExamType">
+                    <option value="CIE-1">CIE-1</option>
+                    <option value="CIE-2">CIE-2</option>
+                    <option value="CIE-3">CIE-3</option>
+                    <option value="SEE">SEE (Final)</option>
+                    <option value="Quiz">Quiz</option>
+                    <option value="Assignment">Assignment</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Max Marks</label>
+                  <input type="number" class="form-input" id="resultMaxMarks" value="100" min="1" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Marks Obtained</label>
+                  <input type="number" class="form-input" id="resultMarks" placeholder="0" min="0" />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline" onclick="closeResultModal()">Cancel</button>
+              <button class="btn btn-primary" onclick="saveResult()">Add Result</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== EVENTS ===== -->
+      <section class="section" id="section-events">
+        <div class="section-header">
+          <h2 class="section-title">🎉 Events &amp; Announcements</h2>
+          <button class="btn btn-primary btn-sm" onclick="openEventModal()">+ Add Event</button>
+        </div>
+
+        <!-- Mini Calendar -->
+        <div class="events-layout">
+          <div class="events-main">
+            <div class="events-filter-bar">
+              <button class="filter-pill active" onclick="filterEvents('all', this)">All</button>
+              <button class="filter-pill" onclick="filterEvents('exam', this)">📝 Exams</button>
+              <button class="filter-pill" onclick="filterEvents('holiday', this)">🏖️ Holidays</button>
+              <button class="filter-pill" onclick="filterEvents('cultural', this)">🎭 Cultural</button>
+              <button class="filter-pill" onclick="filterEvents('academic', this)">📚 Academic</button>
+              <button class="filter-pill" onclick="filterEvents('personal', this)">📌 Personal</button>
+            </div>
+            <div class="events-list" id="eventsList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+          <div class="events-sidebar-panel">
+            <div class="card">
+              <h3 class="card-title">📅 Mini Calendar</h3>
+              <div id="miniCalendar" class="mini-calendar"></div>
+            </div>
+            <div class="card" style="margin-top:1rem;">
+              <h3 class="card-title">⏰ Upcoming</h3>
+              <div id="upcomingEvents" class="upcoming-list">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event Modal -->
+        <div class="modal-backdrop" id="eventModal">
+          <div class="modal">
+            <div class="modal-header">
+              <h3>Add Event</h3>
+              <button class="modal-close" onclick="closeEventModal()">✕</button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="form-label">Event Title</label>
+                <input type="text" class="form-input" id="eventTitle" placeholder="Event name..." />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-input" id="eventDate" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Category</label>
+                  <select class="form-input" id="eventCategory">
+                    <option value="exam">📝 Exam</option>
+                    <option value="holiday">🏖️ Holiday</option>
+                    <option value="cultural">🎭 Cultural</option>
+                    <option value="academic">📚 Academic</option>
+                    <option value="personal">📌 Personal</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-input form-textarea" id="eventDesc" placeholder="Event details..."></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline" onclick="closeEventModal()">Cancel</button>
+              <button class="btn btn-primary" onclick="saveEvent()">Add Event</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
